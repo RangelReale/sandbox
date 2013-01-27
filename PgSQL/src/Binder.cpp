@@ -115,6 +115,13 @@ void Binder::bind(std::size_t pos, const long& val, Direction dir)
 	poco_assert(dir == PD_IN);
 	realBind(pos, PgSQL_TYPE_INT64, &val, 8);
 }
+
+
+void Binder::bind(std::size_t pos, const unsigned long& val, Direction dir)
+{
+	poco_assert(dir == PD_IN);
+	realBind(pos, PgSQL_TYPE_INT64, &val, 8);
+}
 #endif
 
 

@@ -1,38 +1,38 @@
+cmake_minimum_required(VERSION 2.8)
+PROJECT (PocoDataPgSQL)
+
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+
+SET (EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+SET (LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH})
+
 set(LIBNAME "PocoDataPgSQL")
-set(LIBNAMED "${LIBNAME}d")
+
+FIND_PACKAGE(Poco REQUIRED Data Foundation)
+#IF(Poco_FOUND)
+  INCLUDE_DIRECTORIES(${Poco_INCLUDE_DIRS})
+  LINK_DIRECTORIES(${Poco_LIBRARY_DIR})
+  add_definitions(-DPOCO_STATIC -DPOCO_NO_AUTOMATIC_LIBS)
+#ENDIF(Poco_FOUND)
+
+
+FIND_PACKAGE(PostgreSQL REQUIRED)
+#IF(PostgreSQL_FOUND)
+  INCLUDE_DIRECTORIES(${PostgreSQL_INCLUDE_DIRS})
+#ENDIF(PostgreSQL_FOUND)
+
+
+INCLUDE_DIRECTORIES(include)
 
 set(SRCS "")
 aux_source_directory(src SRCS)
 
 add_definitions(-DTHREADSAFE -DNO_TCL)
 
-include_directories( include ${PGSQL_INCLUDE_DIR} ${PGSQL_INCLUDE_DIR}/postgresql )
+add_library( ${LIBNAME} ${SRCS} )
+target_link_libraries( ${LIBNAME} ${Poco_LIBRARIES} ${PostgreSQL_LIBRARIES})
 
-#link_directories( )
-
-add_library( ${LIBNAME} ${LIB_MODE} ${SRCS} )
-set_target_properties( ${LIBNAME} 
-	PROPERTIES COMPILE_FLAGS ${RELEASE_CXX_FLAGS}
-	VERSION ${SHARED_LIBRARY_VERSION} SOVERSION ${SHARED_LIBRARY_VERSION} )
-target_link_libraries( ${LIBNAME} PocoData PocoFoundation ${PGSQL_LIBRARIES})
-
-add_library( ${LIBNAMED} ${LIB_MODE} ${SRCS} )
-set_target_properties( ${LIBNAMED}  
-	PROPERTIES COMPILE_FLAGS "${DEBUG_CXX_FLAGS}" 
-	VERSION ${SHARED_LIBRARY_VERSION} SOVERSION ${SHARED_LIBRARY_VERSION} )
-target_link_libraries( ${LIBNAMED} PocoDatad PocoFoundationd ${PGSQL_LIBRARIES})
-
-install(
-    DIRECTORY include/Poco
-    DESTINATION include
-    PATTERN ".svn" EXCLUDE
-    )
-    
-install(
-    TARGETS ${LIBNAME} ${LIBNAMED}
-    DESTINATION lib
-    )
-
-if (ENABLE_TESTS)
-  add_subdirectory(testsuite)
-endif ()
+#if (ENABLE_TESTS)
+#  add_subdirectory(testsuite)
+#endif ()

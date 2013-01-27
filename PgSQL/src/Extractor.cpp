@@ -108,6 +108,12 @@ bool Extractor::extract(std::size_t pos, long& val)
 {
 	return realExtractFixed(pos, PgSQL_TYPE_INT64, &val);
 }
+
+
+bool Extractor::extract(std::size_t pos, unsigned long& val)
+{
+	return realExtractFixed(pos, PgSQL_TYPE_INT64, &val);
+}
 #endif
 
 
